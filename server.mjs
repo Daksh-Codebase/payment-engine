@@ -8,7 +8,7 @@ export function retryPayment({ outcomes, maxAttempts }) {
       outcomes.some(o => !['success', 'temporary', 'permanent'].includes(o)))
     return { code: 400, body: { error: 'INVALID_OUTCOMES' } };
   let attempts = 0;
-  for (const outcome of outcomes.slice(0, maxAttempts)) {
+  for (const outcome of outcomes) {
     attempts++;
     if (outcome === 'success')
       return { code: 200, body: { status: 'success', attempts } };
