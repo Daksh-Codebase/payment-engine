@@ -7,8 +7,14 @@ export function retryPayment({ outcomes, maxAttempts }) {
   if (!Array.isArray(outcomes) || !outcomes.length || outcomes.length > 10 ||
       outcomes.some(o => !['success', 'temporary', 'permanent'].includes(o)))
     return { code: 400, body: { error: 'INVALID_OUTCOMES' } };
-  // Challenge: this baseline attempts only once, even after a temporary failure.
-  return { code: 200, body: { status: outcomes[0] === 'success' ? 'success' : 'failed', attempts: 1 } };
+  let attempts = 0;
+  for (const outcome of outcomes.slice(0, maxAttempts)) {
+    attempts++;
+    if (outcome === 'success')
+      return { code: 200, body: { status: 'success', attempts } };
+    if (outcome === 'permanent') break;
+  }
+  return { code: 200, body: { status: 'failed', attempts } };
 }
 
 export function createServer() {
