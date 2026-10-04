@@ -26,7 +26,7 @@ export function createServer() {
   };
   return http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
-    if (req.method === 'GET' && url.pathname === '/health') return respond(res, 200, { ok: true });
+    if (req.method === 'GET' && url.pathname === '/health') return respond(res, 200, { ok: false });
     if (req.method === 'GET' && /^\/payments\/pay_[0-9]+$/.test(url.pathname)) {
       const payment = payments.get(url.pathname.split('/')[2]);
       return respond(res, payment ? 200 : 404, payment ?? { error: 'NOT_FOUND' });
